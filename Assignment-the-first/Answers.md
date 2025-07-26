@@ -69,30 +69,76 @@ Mock report:
 4. Pseudocode
 
 
-STORE indexes as a set, or maybe tuple?  
-READ in and open all four .fastq files (R1, R2, R3, R4) in parallel  
-SET header, seq/index, plus, quality
+        STORE indexes as a set of strings, maybe tuple 
+        READ in and open all four .fastq files (R1, R2, R3, R4) in parallel using gzip  
+        WHILE not EOF:
+        OPEN files for writing: <indexes>_R1.fastq, <indexes>_R2.fastq, unknown_R1.fastq, unknown_R2.fastq, hopped_R1.fastq, hopped_R2.fastq
+
+        read 4 lines from R1:   
+            SET <R1>_ + header, seq, plus, quality
+        read 4 lines from R2: 
+            SET <index1>_ + header, seq, plus, quality
+        read 4 lines from R3:   
+            SET <index2>_ + header, seq, plus, quality
+        read 4 lines from R4: 
+            SET <R2>_ + header, seq, plus, quality
+        
+        SET count for unknown index pairs = 0
+        SET dictionaries for matched, hopped pairs: 
+            matched_indexes = dict{int}
+            hopped_indexes = dict{int}
+        
+        LOOP through all four files per one record (four lines) at a time
+            reverse_complement index2_seq --> index2_rc
+            
+            # screening for low quality / Ns
+
+            IF "N" in one or both index1_seq or index2_rc or if quality filter fails:
+                THEN append <index1>-<index2> to header of both R1 and R2 
+                WRITE R1 to R1_unknown, R2 to R2_unknown
+                INCREMENT unknown count
+                continue
+
+            # matches
+
+            ELSE IF index1_seq == index2_rc and index1_seq is in known indexes:
+                THEN append <index1>-<index2> to header of both R1 and R2
+                WRITE R1 to <this_index>_R1.fq file, write R2 to <this_index>_R2.fq file
+                IF <index1>-<index2> in matched_indexes:
+                    matched_indexes{<index1>-<index2>} += 1
+                ELSE:
+                    matched_indexes{<index1>-<index2>} = 1 
+                continue 
+
+            # for index hoppers 
+
+            ELSE IF index1_seq in known indexes, index2_rc in known indexes, and index1_seq != index2_rc:
+                THEN append <index1>-<index2> to header of both R1 and R2
+                THEN send R1 to hopped_R1.fq file, R4 to hopped_R2.fq file
+                IF <index1>-<index2> in hopped_indexes:
+                    hopped_indexes{<index1>-<index2>} += 1 
+                ELSE:
+                    hopped_indexes{<index1>-<index2>} = 1
+                continue
+
+            # for all other unknown scenarios
+
+            ELSE:
+                THEN append <index1>-<index2> to header of both R1 and R2 
+                WRITE R1 to R1_unknown, R2 to R2_unknown
+                INCREMENT unknown count
+        
+        WRITE matched, hopped dictionaries to .txt files
+        RUTURN wc -l for matched, hopped dicts
+        PRINT unknown counts
+        
 
 
-    LOOP through all four files per one record (four lines) at a time
-        SET count for matched, hopped, and unknown index pairs = 0
-        GET index from R2 
-        GET index from R3 and reverse complement it
-        IF one or both have low quality or contain N:
-            THEN send to unknown
-            INCREMENT unknown
-        ELSE IF index 1 == index 2 and is in known index list:
-            THEN send R1 to matched_R1.fq file, send R4 to matched_R2.fq file
-            INCREMENT matched
-        ELSE IF both are matched to known index but do not match eachother:
-            THEN send R1 to hopped_R1.fq file, R4 to hopped_R2.fq file
-            INCREMENT hopped 
 
 
 
 
-
-5. High level functions. For each function, be sure to include:
+5. High level functions:
 
 
 
@@ -100,29 +146,33 @@ SET header, seq/index, plus, quality
             '''Converts a single character into a phred score'''
             return ord(letter)-33 
 
-        test example:     
+        test example: 
+            Input: I
+            Expected output: 40
         assert convert_phred("I") == 40, "wrong phred score for 'I'"
 
 
         def reverse_complement(seq:str) -> str:
             '''Returns the reverse compliment of a DNA sequence'''
-            SET dictionary to matched complement pairs: A:T, G:C, C:G, T:A
+            SET dictionary to matched complement pairs: {A:T, G:C, C:G, T:A}
             return new_seq
 
         test example: 
-        "GTCA" --> "TGAC"
+            Input: "GTCA" 
+            Output: "TGAC"
         assert reverse_complement("GTCA")=="TGAC", "Incorrect reverse complement"
 
 
         def quality_filter(index_seq:str,qual_str:str, threshold:int = 30)-> bool:
             '''Returns True if all bases exceed threshold value, no N present'''
-            IF 'Nn' in index_seq:
+            IF 'N' in index_seq:
                 return False
             ELSE
                 return all(convert_phred) >= threshold 
         
         test example:
-        "TATGCCC", "IIIIIII" --> True
+            Input: "TATGCCC", "IIIIIII" 
+            Ouput: True
 
         def qual_score(phred_score: str) -> float:
             '''Fuction that iterates through the phred_score string, calculates quality score using convert_phred function, and returns the calculated average quality score of the entire string'''
@@ -131,5 +181,13 @@ SET header, seq/index, plus, quality
                 average += convert_phred(phred_score[i])
             average /= len(phred_score)
             return average
+        Test example:
+            Input: "EEE"
+            Ouptut: 36
+
+            assert qual_score("EEE") == 36
+            assert qual_score("#I") == 21
+            assert qual_score("EJ") == 38.5
+            print("You calcluated the correct average phred score")
 
     
