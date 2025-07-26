@@ -3,12 +3,14 @@
 ## Part 1
 1. Be sure to upload your Python script. Provide a link to it here:
 
+
+
 | File name | label | Read length | Phred encoding |
 |---|---|---|---|
-| 1294_S1_L008_R1_001.fastq.gz |  |  |  |
-| 1294_S1_L008_R2_001.fastq.gz |  |  |  |
-| 1294_S1_L008_R3_001.fastq.gz |  |  |  |
-| 1294_S1_L008_R4_001.fastq.gz |  |  |  |
+| 1294_S1_L008_R1_001.fastq.gz | biological data | 101 | Phred+33 |
+| 1294_S1_L008_R2_001.fastq.gz | index 1 | 8 | Phred+33 |
+| 1294_S1_L008_R3_001.fastq.gz | index 2 | 8 | Phred+33 |
+| 1294_S1_L008_R4_001.fastq.gz | biological data | 101 | Phred+33 |
 
 2. Per-base NT distribution
     1. Use markdown to insert your 4 histograms here.
@@ -67,7 +69,7 @@ Mock report:
 4. Pseudocode
 
 
-STORE indexes as a list.  
+STORE indexes as a set, or maybe tuple?  
 READ in and open all four .fastq files (R1, R2, R3, R4) in parallel  
 SET header, seq/index, plus, quality
 
@@ -76,7 +78,6 @@ SET header, seq/index, plus, quality
         SET count for matched, hopped, and unknown index pairs = 0
         GET index from R2 
         GET index from R3 and reverse complement it
-        CHECK both for Ns, low quality 
         IF one or both have low quality or contain N:
             THEN send to unknown
             INCREMENT unknown
