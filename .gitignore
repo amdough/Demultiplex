@@ -11,6 +11,10 @@
 !TEST-input_FASTQ/*
 !TEST-output_FASTQ/*
 
+#tests
+tests
+part1.1_outs
+
 # vscode
 .vscode/
 

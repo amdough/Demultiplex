@@ -11,10 +11,10 @@
 written during the Bioinformatics and Genomics Program coursework. Current version
 holds scripts to convert phred scores and get quality scores, calculate mapped and unmapped percentages, 
 calculate the median of a list of integers, convert a fasta file to one line from multiple lines, get gc content, 
-and much much more! Soon to contain functions for demultiplexing. 
+and much much more! 
 '''
 
-__version__ = "0.4"         # Read way more about versioning here:
+__version__ = "0.3"         # Read way more about versioning here:
                             # https://en.wikipedia.org/wiki/Software_versioning
 
 DNAbases = set('ATGCNatcgn')

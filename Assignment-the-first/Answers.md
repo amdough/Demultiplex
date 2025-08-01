@@ -3,6 +3,8 @@
 ## Part 1
 1. Be sure to upload your Python script. Provide a link to it here:
 
+[Python Script](../part1.2.py)
+[Script for Part 1](../part1.2.sh)
 
 
 | File name | label | Read length | Phred encoding |
@@ -12,11 +14,36 @@
 | 1294_S1_L008_R3_001.fastq.gz | index 2 | 8 | Phred+33 |
 | 1294_S1_L008_R4_001.fastq.gz | biological data | 101 | Phred+33 |
 
+    example code for phred encoding: 
+
+    ```zcat 1294_S1_L008_R1_001.fastq.gz | awk 'NR%4==0 && NR%10000==0' | grep '[a-z]' -m 1 && echo "Phred+64 likely" || echo "Phred+33 likely"```
+
+            Phred+33 likely
+
+
 2. Per-base NT distribution
-    1. Use markdown to insert your 4 histograms here.
-    2. **YOUR ANSWER HERE**
-    3. **YOUR ANSWER HERE**
-    
+    1. ![Read1 NT Dist](../Read1.png)
+            ![Index1 NT Dist](../Index1.png)
+            ![Index2 NT Dist](../Index2.png)
+            ![Read2 NT Dist](../Read2.png)
+    2.	What is a good quality score cutoff for index reads and biological read pairs to utilize for sample identification and downstream analysis, respectively? Justify your answer.
+
+            I would suggest a qs cutoff of 30. This is based on the consistently higher mid-read scores for both Read 1 & 2, and poorer quality at the ends. Similarly for the indexes, there was variable quality, where scores dipped at the early positions due to presence of Ns (most likely), and then improves with later positions. A cutoff of 30 would avoid hopping or miscalls because of those lower quality bases or presence of Ns. 
+
+            There were mentions of hamming distances across indexes in conversations with other students, but I do not understand this concept at all and won't even pretend to in this answer. So, quality filtering it is!
+
+
+
+    3.	How many indexes have undetermined (N) base calls? (Utilize your command line tool knowledge. Submit the command(s) you used. CHALLENGE: use a one-line command)
+
+            ```zcat /projects/bgmp/shared/2017_sequencing/1294_S1_L008_R2_001.fastq.gz | awk 'NR%4==2' | grep -c "N" ```
+
+                3976613
+
+            ```zcat /projects/bgmp/shared/2017_sequencing/1294_S1_L008_R3_001.fastq.gz | awk 'NR%4==2' | grep -c "N" ```
+
+                3328051
+
 ## Part 2
 1. Define the problem
 
