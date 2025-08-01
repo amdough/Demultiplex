@@ -28,9 +28,9 @@
             ![Read2 NT Dist](../Read2.png)
     2.	What is a good quality score cutoff for index reads and biological read pairs to utilize for sample identification and downstream analysis, respectively? Justify your answer.
 
-            I would suggest a qs cutoff of 30. This is based on the consistently higher mid-read scores for both Read 1 & 2, and poorer quality at the ends. Similarly for the indexes, there was variable quality, where scores dipped at the early positions due to presence of Ns (most likely), and then improves with later positions. A cutoff of 30 would avoid hopping or miscalls because of those lower quality bases or presence of Ns. 
+        I would suggest a qs cutoff of 30. This is based on the consistently higher mid-read scores for both Read 1 & 2, and poorer quality at the ends. Similarly for the indexes, there was variable quality, where scores dipped at the early positions due to presence of Ns (most likely), and then improves with later positions. A cutoff of 30 would avoid hopping or miscalls because of those lower quality bases or presence of Ns. 
 
-            There were mentions of hamming distances across indexes in conversations with other students, but I do not understand this concept at all and won't even pretend to in this answer. So, quality filtering it is!
+        There were mentions of hamming distances across indexes in conversations with other students, but I do not understand this concept at all and won't even pretend to in this answer. So, quality filtering it is!
 
 
 
