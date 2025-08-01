@@ -3,9 +3,12 @@
 ## Part 1
 1. Be sure to upload your Python script. Provide a link to it here:
 
-[Python Script](../part1.2.py)
+[Python Script](../part1.2.py),
 [Script for Part 1](../part1.2.sh)
 
+Lab notebook: 
+
+[labnotebook](../LabNotebook.md)
 
 | File name | label | Read length | Phred encoding |
 |---|---|---|---|
