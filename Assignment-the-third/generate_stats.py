@@ -49,6 +49,13 @@ with open ("results.md", "w") as out:
     perc_swap = (total_hopped/total_reads)*100
     out.write(f"- Total hopped reads: {total_hopped}\n")
     out.write(f"- Percentage of hopped reads: {perc_swap:.2f}%\n\n")
+    
+    out.write("## Percentage of hopped reads per sample: \n\n")
+    out.write("| Index Pair | Count | Percentage (%) |\n")
+    out.write("|------------|-------|----------------|\n")
+    for index_pair, count in sorted(hopped_counts.items(), key=sort_by_count, reverse=True):
+        perc = (count/total_hopped)*100
+        out.write(f"| {index_pair} | {count} | {perc:.2f}% |\n")
 
     out.write("## Unknown Reads\n")
     perc_unk = (unknown_total/total_reads)*100
